@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer</title>
+</head>
+<body>
+    <h2>Upload Your Resume</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" required>
+        <button type="submit">Upload & Analyze</button>
+    </form>
+    
+    <h3>Analysis Result:</h3>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById("uploadForm").onsubmit = async function(e) {
+            e.preventDefault();
+            let fileInput = document.getElementById("fileInput").files[0];
+            if (!fileInput) return alert("Please upload a resume!");
+
+            let formData = new FormData();
+            formData.append("file", fileInput);
+
+            let response = await fetch("http://localhost:8000/upload/", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+            document.getElementById("result").innerText = JSON.stringify(result, null, 2);
+        };
+
+        async function uploadResume() {
+    let formData = new FormData();
+    let fileInput = document.querySelector("#resumeInput");
+
+    if (fileInput.files.length === 0) {
+        console.error("No file selected!");
+        alert("Please select a file.");
+        return;
+    }
+
+    formData.append("file", fileInput.files[0]);
+
+    try {
+        console.log("Uploading file...");
+        let response = await fetch("http://127.0.0.1:8000/upload/", {
+            method: "POST",
+            body: formData
+        });
+
+        let result = await response.json();
+        console.log("Response:", result);
+        alert("Resume uploaded successfully!");
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error uploading resume!");
+    }
+}
+
+    </script>
+</body>
+</html>
